@@ -1,4 +1,4 @@
-
+﻿
 ; $text$（use TeX）
 ^4::
 Send ^c
