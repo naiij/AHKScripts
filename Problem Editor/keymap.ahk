@@ -69,9 +69,12 @@ Return
 
 ; symbol to TeX
 !0::
-replace :=  {≤:"\leq ",≥:"\geq ",∫:"\int ",∑:"\sum ",（:"(",）:")",，:", ", ~:"\sim ", "...":"\cdots ", "<=":"\leq ", ">=":"\geq "}
+replace :=  {≤:"\leq ",≥:"\geq ",∫:"\int ",∑:"\sum ",（:" (",）:") ",，:", ", ~:"\sim ", ≠:"\neq ",％:"%"}
+For what, with in replace
+    StringReplace, clipboard, clipboard, %what%, %with%, All
+replace := {"...":"\cdots ", "<=":"\leq ", ">=":"\geq "}
 For what, with in replace
     StringReplace, clipboard, clipboard, %what%, %with%, All
 Clipboard := StrReplace(Clipboard, "`r`n", "`r`n`r`n")    
 MsgBox, %clipboard%
-return
+Return
