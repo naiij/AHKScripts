@@ -96,15 +96,19 @@ Return
 
 ; symbol to TeX
 !0::
-replace := {≤:"\leq ",≥:"\geq ",∫:"\int ",∑:"\sum ",（:" (",）:") ",，:", ", ≠:"\neq ",％:"%", ∪:"\cup",……:"\cdots ", …:"\cdots ", ：:":",？:"?",×:"\times "}
+; unicode symbols
+replace := {≤:"\leq ",≥:"\geq ",∫:"\int ",∑:"\sum ",（:" (",）:") ",，:", ", ≠:"\neq ",％:"%", ∪:"\cup",……:"\cdots ", …:"\cdots ", ：:":",？:"?",×:"\times ",；:"; ",←:"\leftarrow ", 𝜋:"\pi "}
 For what, with in replace
     StringReplace, clipboard, clipboard, %what%, %with%, All
+; str symbols	
 replace := {"...":"\cdots ", "<=":"\leq ", ">=":"\geq ","~":"\sim ", "\cdots \cdots":"\cdots"}
 For what, with in replace
     StringReplace, clipboard, clipboard, %what%, %with%, All
+; italic lower letter
 replace := {𝑎:"a",𝑏:"b",𝑐:"c",𝑑:"d",𝑒:"e",𝑓:"f",𝑔:"g",ℎ:"h",𝑖:"i",𝑗:"j",𝑘:"k",𝑙:"l",𝑚:"m",𝑛:"n",𝑜:"o",𝑝:"p",𝑞:"q",𝑟:"r",𝑠:"s",𝑡:"t",𝑢:"u",𝑣:"v",𝑤:"w",𝑥:"x",𝑦:"y",𝑧:"z"}
 For what, with in replace
     StringReplace, clipboard, clipboard, %what%, %with%, All
+; italic upper letter
 replace := {𝐴:"A",𝐵:"B",𝐶:"C",𝐷:"D",𝐸:"E",𝐹:"F",𝐺:"G",𝐻:"H",𝐼:"I",𝐽:"J",𝐾:"K",𝐿:"L",𝑀:"M",𝑁:"N",𝑂:"O",𝑃:"P",𝑄:"Q",𝑅:"R",𝑆:"S",𝑇:"T",𝑈:"U",𝑉:"V",𝑊:"W",𝑋:"X",𝑌:"Y",𝑍:"Z"}
 For what, with in replace
     StringReplace, clipboard, clipboard, %what%, %with%, All
@@ -112,4 +116,16 @@ return
 
 !-::
 Clipboard := StrReplace(Clipboard, "`r`n", "`r`n`r`n")    
+return
+
+!F2::
+Send {F2}
+Sleep, 10
+Send {Right}{Left}
+Sleep, 10
+Send {BackSpace}{BackSpace}{BackSpace}{BackSpace}{BackSpace}{Home}ex_{Enter}
+return
+
+!4::
+Send ^a^4
 return
