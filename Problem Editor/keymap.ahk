@@ -1,32 +1,22 @@
 ﻿
-range(start, stop:="", step:=1) {
-	static range := { _NewEnum: Func("_RangeNewEnum") }
-	if !step
-		throw "range(): Parameter 'step' must not be 0 or blank"
-	if (stop == "")
-		stop := start, start := 0
-	; Formula: r[i] := start + step*i ; r = range object, i = 0-based index
-	; For a postive 'step', the constraints are i >= 0 and r[i] < stop
-	; For a negative 'step', the constraints are i >= 0 and r[i] > stop
-	; No result is returned if r[0] does not meet the value constraint
-	if (step > 0 ? start < stop : start > stop) ;// start == start + step*0
-		return { base: range, start: start, stop: stop, step: step }
-}
+; TeX map 
+global tex_symbols_map := {≤:"\leq ",≥:"\geq ",∫:"\int ",∑:"\sum ",（:" (",）:") ",，:", ", ≠:"\neq ",％:"%", ∪:"\cup",……:"\cdots ", …:"\cdots "
+, ：:":",？:"?",×:"\times ", ；:"; ",←:"\leftarrow ", 𝜋:"\pi ", ⊕:"\oplus ", ⨁:"\bigoplus ", ～:"\sim ", ⌊:"\lfloor ", ⌋:"\rfloor "}
 
-_RangeNewEnum(r) {
-	static enum := { "Next": Func("_RangeEnumNext") }
-	return { base: enum, r: r, i: 0 }
-}
+global tex_str_symbols_map := {"...":"\cdots ", "<=":"\leq ", ">=":"\geq ","~":"\sim ", "\cdots \cdots":"\cdots","&lt;=":"\leq ","!=":"\neq "}
 
-_RangeEnumNext(enum, ByRef k, ByRef v:="") {
-	stop := enum.r.stop, step := enum.r.step
-	, k := enum.r.start + step*enum.i
-	if (ret := step > 0 ? k < stop : k > stop)
-		enum.i += 1
-	return ret
-}
+global italic_lower_letters_map := {𝑎:"a",𝑏:"b",𝑐:"c",𝑑:"d",𝑒:"e",𝑓:"f",𝑔:"g",ℎ:"h",𝑖:"i",𝑗:"j",𝑘:"k",𝑙:"l",𝑚:"m",𝑛:"n",𝑜:"o",𝑝:"p",𝑞:"q"
+,𝑟:"r",𝑠:"s",𝑡:"t",𝑢:"u",𝑣:"v",𝑤:"w",𝑥:"x",𝑦:"y",𝑧:"z"}
 
-; $text$（use TeX）
+global italic_upper_letters_map := {𝐴:"A",𝐵:"B",𝐶:"C",𝐷:"D",𝐸:"E",𝐹:"F",𝐺:"G",𝐻:"H",𝐼:"I",𝐽:"J",𝐾:"K",𝐿:"L",𝑀:"M",𝑁:"N",𝑂:"O",𝑃:"P",𝑄:"Q"
+,𝑅:"R",𝑆:"S",𝑇:"T",𝑈:"U",𝑉:"V",𝑊:"W",𝑋:"X",𝑌:"Y",𝑍:"Z"}
+
+global tex_replace_map := [tex_symbols_map, tex_str_symbols_map, italic_lower_letters_map, italic_upper_letters_map]
+
+; chinese chars
+global w_char := "\u3002|\uff1f|\uff01|\uff0c|\u3001|\uff1b|\uff1a|\u201c|\u201d|\u2018|\u2019|\uff08|\uff09|\u300a|\u300b|\u3008|\u3009|\u3010|\u3011|\u300e|\u300f|\u300c|\u300d|\ufe43|\ufe44|\u3014|\u3015|\u2026|\u2014|\uff5e|\ufe4f|\uffe5|\u4e00-\u9fa5"
+
+; $text$ (use TeX)
 ^4::
 Send ^c
 Sleep, 10
@@ -96,22 +86,12 @@ Return
 
 ; symbol to TeX
 !0::
-; unicode symbols
-replace := {≤:"\leq ",≥:"\geq ",∫:"\int ",∑:"\sum ",（:" (",）:") ",，:", ", ≠:"\neq ",％:"%", ∪:"\cup",……:"\cdots ", …:"\cdots ", ：:":",？:"?",×:"\times ",；:"; ",←:"\leftarrow ", 𝜋:"\pi "}
-For what, with in replace
-    StringReplace, clipboard, clipboard, %what%, %with%, All
-; str symbols	
-replace := {"...":"\cdots ", "<=":"\leq ", ">=":"\geq ","~":"\sim ", "\cdots \cdots":"\cdots"}
-For what, with in replace
-    StringReplace, clipboard, clipboard, %what%, %with%, All
-; italic lower letter
-replace := {𝑎:"a",𝑏:"b",𝑐:"c",𝑑:"d",𝑒:"e",𝑓:"f",𝑔:"g",ℎ:"h",𝑖:"i",𝑗:"j",𝑘:"k",𝑙:"l",𝑚:"m",𝑛:"n",𝑜:"o",𝑝:"p",𝑞:"q",𝑟:"r",𝑠:"s",𝑡:"t",𝑢:"u",𝑣:"v",𝑤:"w",𝑥:"x",𝑦:"y",𝑧:"z"}
-For what, with in replace
-    StringReplace, clipboard, clipboard, %what%, %with%, All
-; italic upper letter
-replace := {𝐴:"A",𝐵:"B",𝐶:"C",𝐷:"D",𝐸:"E",𝐹:"F",𝐺:"G",𝐻:"H",𝐼:"I",𝐽:"J",𝐾:"K",𝐿:"L",𝑀:"M",𝑁:"N",𝑂:"O",𝑃:"P",𝑄:"Q",𝑅:"R",𝑆:"S",𝑇:"T",𝑈:"U",𝑉:"V",𝑊:"W",𝑋:"X",𝑌:"Y",𝑍:"Z"}
-For what, with in replace
-    StringReplace, clipboard, clipboard, %what%, %with%, All
+For index, value in tex_replace_map
+	For what, with in value
+    	StringReplace, clipboard, clipboard, %what%, %with%, All
+
+regex_from := "[" w_char + "]{1}^["+w_char+"]+["+w_char+"]"
+regex_to := 
 return
 
 !-::
