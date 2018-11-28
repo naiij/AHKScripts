@@ -1,5 +1,6 @@
 ﻿
-; TeX map 
+
+; TeX map   Tex 符号映射
 global tex_symbols_map := {≤:"\leq ",≥:"\geq ",∫:"\int ",∑:"\sum ",（:" (",）:") ",，:", ", ≠:"\neq ",％:"%", ∪:"\cup",……:"\cdots ", …:"\cdots "
 , ：:":",？:"?",×:"\times ", ；:"; ",←:"\leftarrow ", 𝜋:"\pi ", ⊕:"\oplus ", ⨁:"\bigoplus ", ～:"\sim ", ⌊:"\lfloor ", ⌋:"\rfloor "}
 
@@ -13,10 +14,8 @@ global italic_upper_letters_map := {𝐴:"A",𝐵:"B",𝐶:"C",𝐷:"D",𝐸:"E"
 
 global tex_replace_map := [tex_symbols_map, tex_str_symbols_map, italic_lower_letters_map, italic_upper_letters_map]
 
-; chinese chars
-global w_char := "\u3002|\uff1f|\uff01|\uff0c|\u3001|\uff1b|\uff1a|\u201c|\u201d|\u2018|\u2019|\uff08|\uff09|\u300a|\u300b|\u3008|\u3009|\u3010|\u3011|\u300e|\u300f|\u300c|\u300d|\ufe43|\ufe44|\u3014|\u3015|\u2026|\u2014|\uff5e|\ufe4f|\uffe5|\u4e00-\u9fa5"
 
-; $text$ (use TeX)
+;  Ctrl+4   $text$ (use TeX)  在当前选中文本两端加$
 ^4::
 Send ^c
 Sleep, 10
@@ -36,7 +35,7 @@ Return
 Send \leq{Space}
 Return
 
-; delete first and last char, then #### (h4)
+;  Ctrl+3   delete first and last char, then #### (h4)   转换成h4标题
 ^3::
 Send {Home}{Del}+3+3+3+3{Space}{End}{BS}
 Return
@@ -55,7 +54,7 @@ Sleep, 10
 Send {Space}
 Return
 
-; x% -> $x\%$
+;  Ctrl+5  x% -> $x\%$  当前选中文本转换成TeX格式的百分数
 ^5::
 Send ^c
 Sleep, 10
@@ -84,28 +83,35 @@ Send +,/td+.
 Return
 
 
-; symbol to TeX
+;  Alt+0  symbol to TeX  一些符号转为 TeX 格式
 !0::
 For index, value in tex_replace_map
 	For what, with in value
     	StringReplace, clipboard, clipboard, %what%, %with%, All
 
-regex_from := "[" w_char + "]{1}^["+w_char+"]+["+w_char+"]"
-regex_to := 
+return
+
+;  Alt+9  (汉字|。|换行)(其它字符)(汉字|。|换行) ->  (汉字|。|换行) $ (其它字符) $ (汉字|。|换行)   transform to LaTex format
+!9::
+clipboard := RegExReplace(clipboard, "([\p{Han}|\r|\n|#|" Chr(0x3002) "])([^\p{Han}|\r|\n|" Chr(0x3002) "]{0,}[^\p{Han}|\r|\n|\s|#|,|" Chr(0x3002) "]+[^\p{Han}|\r\n|" Chr(0x3002) "]{0,})([\p{Han}|\r|\n|#|" Chr(0x3002) "])", "$1 $ $2 $ $3")
+; 百分数百分号前面加\
+clipboard := RegExReplace(clipboard, "(\d{2}|100)%", "$1\%")
 return
 
 !-::
 Clipboard := StrReplace(Clipboard, "`r`n", "`r`n`r`n")    
 return
 
+; Alt+F2  文件名改成ex_原文件名
 !F2::
 Send {F2}
 Sleep, 10
-Send {Right}{Left}
+Send {End}{Left}{Left}{Left}
 Sleep, 10
 Send {BackSpace}{BackSpace}{BackSpace}{BackSpace}{BackSpace}{Home}ex_{Enter}
 return
 
+; Alt+4   全选，然后Ctrl+4
 !4::
 Send ^a^4
 return
